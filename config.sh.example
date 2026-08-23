@@ -1,0 +1,10 @@
+# MediaWiki connection settings
+# Copy this file to config.sh and fill in the values.
+# Obtain bot credentials from Special:BotPassword on your wiki.
+
+export MW_URL=""        # wiki base URL ending with /  e.g. https://wiki.example.com/
+export MW_USER=""       # bot username  e.g. MyBot@BotPassword
+export MW_PASS=""       # bot password
+
+# Optional: label embedded in edit summaries
+export BOT_INFO="mw-skills"
