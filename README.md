@@ -6,7 +6,7 @@ Inspired by [brucekomike/mwpm](https://github.com/brucekomike/mwpm).
 ## Prerequisites
 
 ```
-sudo apt update && sudo apt install curl jq python3
+sudo apt update && sudo apt install curl jq
 ```
 
 ## Setup
@@ -69,3 +69,16 @@ Fetch a wiki page and execute its content as a shell script.
 | `wiki-search.sh` | Search wiki pages |
 | `wiki-edit.sh` | Edit one or more wiki pages |
 | `wiki-exec.sh` | Execute a wiki page as a shell script |
+
+## Claude Code
+
+This repo is formatted as a Claude Code skill set. Open the repo in Claude Code and use the following slash commands:
+
+| Command | Example |
+|---------|---------|
+| `/project:wiki-read` | `/project:wiki-read "Main Page"` |
+| `/project:wiki-search` | `/project:wiki-search "deployment guide" 20` |
+| `/project:wiki-edit` | `/project:wiki-edit "My Page" content.txt "initial import"` |
+| `/project:wiki-exec` | `/project:wiki-exec "Scripts/deploy" arg1 arg2` |
+
+Make sure `config.sh` is configured before running any command.
