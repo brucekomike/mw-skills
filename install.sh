@@ -60,7 +60,7 @@ First ensure \`${CONFIG_DIR}/config.sh\` exists and contains valid credentials (
 Run:
 
 \`\`\`bash
-MW_SKILLS_CONFIG="${CONFIG_DIR}/config.sh" bash "${SKILL_DIR}/${script}" \$ARGUMENTS
+MW_SKILLS_CONFIG="${CONFIG_DIR}/config.sh" bash "${SKILL_DIR}/${script}" $ARGUMENTS
 \`\`\`
 
 Report the output to the user. On error, show the error message clearly.

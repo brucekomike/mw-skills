@@ -39,7 +39,8 @@ if [[ -z "$CONTENT" || "$CONTENT" == "null" ]]; then
 fi
 
 # Write content to a temp file and execute it
-TMPFILE=$(mktemp /tmp/wiki-exec-XXXXXX.sh)
+# Use umask 077 so the file is created private from the start
+TMPFILE=$(umask 077; mktemp /tmp/wiki-exec-XXXXXX.sh)
 trap 'rm -f "$TMPFILE"' EXIT
 
 printf '%s\n' "$CONTENT" > "$TMPFILE"

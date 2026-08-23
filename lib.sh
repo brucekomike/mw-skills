@@ -44,8 +44,8 @@ function get-token() {
 function mw-login() {
   curl -fsSL -X POST \
     -d action=login \
-    -d lgname="$MW_USER" \
-    -d lgpassword="$MW_PASS" \
+    --data-urlencode lgname="$MW_USER" \
+    --data-urlencode lgpassword="$MW_PASS" \
     --data-urlencode lgtoken="$(get-token login)" \
     -d format=json \
     -c "$_MW_COOKIE_JAR" \
