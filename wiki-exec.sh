@@ -43,8 +43,8 @@ fi
 TMPFILE=$(mktemp /tmp/wiki-exec-XXXXXX.sh)
 trap 'rm -f "$TMPFILE"' EXIT
 
-echo "$CONTENT" > "$TMPFILE"
-chmod +x "$TMPFILE"
+printf '%s\n' "$CONTENT" > "$TMPFILE"
+chmod 700 "$TMPFILE"
 
 echo "=== executing wiki page: $PAGE ===" >&2
 bash "$TMPFILE" "$@"

@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 # lib.sh – shared MediaWiki API helpers for mw-skills
 
+# Private cookie jar created once per session with restricted permissions.
+# Each script that sources lib.sh gets its own jar in /tmp.
+if [[ -z "${_MW_COOKIE_JAR:-}" ]]; then
+  _MW_COOKIE_JAR=$(mktemp /tmp/mw-skills-cookies-XXXXXX)
+  chmod 600 "$_MW_COOKIE_JAR"
+  trap 'rm -f "$_MW_COOKIE_JAR"' EXIT
+fi
+
 # Obtain a MediaWiki API token.
 # Usage: get-token <type>   (e.g. login, csrf)
 function get-token() {
@@ -11,8 +19,8 @@ function get-token() {
     -d meta=tokens \
     -d type="$type" \
     -d format=json \
-    -c cookie.txt \
-    -b cookie.txt \
+    -c "$_MW_COOKIE_JAR" \
+    -b "$_MW_COOKIE_JAR" \
     "${MW_URL}api.php")
   jq -r ".query.tokens[\"${type}token\"]" <<< "$result"
 }
@@ -26,8 +34,8 @@ function mw-login() {
     -d lgpassword="$MW_PASS" \
     --data-urlencode lgtoken="$(get-token login)" \
     -d format=json \
-    -c cookie.txt \
-    -b cookie.txt \
+    -c "$_MW_COOKIE_JAR" \
+    -b "$_MW_COOKIE_JAR" \
     "${MW_URL}api.php"
 }
 
@@ -36,10 +44,14 @@ function mw-login() {
 function mw-read-page() {
   local page="$1"
   local result
-  result=$(curl -fsSL -X GET \
-    -c cookie.txt \
-    -b cookie.txt \
-    "${MW_URL}api.php?action=parse&page=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$page")&prop=wikitext&format=json")
+  result=$(curl -fsSL -G \
+    --data-urlencode "page=$page" \
+    -d action=parse \
+    -d prop=wikitext \
+    -d format=json \
+    -c "$_MW_COOKIE_JAR" \
+    -b "$_MW_COOKIE_JAR" \
+    "${MW_URL}api.php")
   jq -r '.parse.wikitext["*"]' <<< "$result"
 }
 
@@ -48,27 +60,32 @@ function mw-read-page() {
 function mw-search() {
   local query="$1"
   local limit="${2:-10}"
-  curl -fsSL -X GET \
-    -c cookie.txt \
-    -b cookie.txt \
-    "${MW_URL}api.php?action=query&list=search&srsearch=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$query")&srlimit=${limit}&format=json"
+  curl -fsSL -G \
+    --data-urlencode "srsearch=$query" \
+    -d action=query \
+    -d list=search \
+    -d srlimit="$limit" \
+    -d format=json \
+    -c "$_MW_COOKIE_JAR" \
+    -b "$_MW_COOKIE_JAR" \
+    "${MW_URL}api.php"
 }
 
-# Edit (create or update) a wiki page.
-# Usage: mw-edit-page <page-name> <content> [summary]
+# Edit (create or update) a wiki page from a file.
+# Usage: mw-edit-page <page-name> <content-file> [summary]
 function mw-edit-page() {
   local page="$1"
-  local content="$2"
+  local content_file="$2"
   local summary="${3:-$BOT_INFO}"
   curl -fsSL -X POST \
     -d action=edit \
     -d format=json \
     -d title="$page" \
-    --data-urlencode text="$content" \
+    --data-urlencode text@"$content_file" \
     -d summary="$summary" \
     -d bot=true \
     --data-urlencode token="$(get-token csrf)" \
-    -c cookie.txt \
-    -b cookie.txt \
+    -c "$_MW_COOKIE_JAR" \
+    -b "$_MW_COOKIE_JAR" \
     "${MW_URL}api.php"
 }

@@ -34,10 +34,8 @@ edit_page() {
     echo "Content file not found: $content_file" >&2
     return 1
   fi
-  local content
-  content=$(cat "$content_file")
   echo "+++ editing page: $page +++"
-  mw-edit-page "$page" "$content" "$summary"
+  mw-edit-page "$page" "$content_file" "$summary"
   echo
 }
 
