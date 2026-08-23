@@ -18,7 +18,6 @@ QUERY="$1"
 LIMIT="${2:-10}"
 
 # Load configuration and helpers
-source "$(dirname "$0")/config.sh"
 source "$(dirname "$0")/lib.sh"
 
 # Authenticate

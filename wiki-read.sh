@@ -17,7 +17,6 @@ fi
 PAGE="$1"
 
 # Load configuration and helpers
-source "$(dirname "$0")/config.sh"
 source "$(dirname "$0")/lib.sh"
 
 # Authenticate

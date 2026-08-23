@@ -1,6 +1,20 @@
 #!/usr/bin/env bash
 # lib.sh – shared MediaWiki API helpers for mw-skills
 
+# Load configuration.
+# Honour MW_SKILLS_CONFIG env var for user-wide installs; otherwise fall back
+# to config.sh in the same directory as lib.sh itself.
+if [[ -z "${MW_URL:-}" ]]; then
+  _MW_CONFIG="${MW_SKILLS_CONFIG:-$(dirname "${BASH_SOURCE[0]}")/config.sh}"
+  if [[ ! -f "$_MW_CONFIG" ]]; then
+    echo "Config not found: $_MW_CONFIG" >&2
+    echo "Copy config.sh.example to config.sh (or set MW_SKILLS_CONFIG) and fill in credentials." >&2
+    exit 1
+  fi
+  # shellcheck source=/dev/null
+  source "$_MW_CONFIG"
+fi
+
 # Private cookie jar created once per session with restricted permissions.
 # Each script that sources lib.sh gets its own jar in /tmp.
 if [[ -z "${_MW_COOKIE_JAR:-}" ]]; then
@@ -80,9 +94,9 @@ function mw-edit-page() {
   curl -fsSL -X POST \
     -d action=edit \
     -d format=json \
-    -d title="$page" \
+    --data-urlencode title="$page" \
     --data-urlencode text@"$content_file" \
-    -d summary="$summary" \
+    --data-urlencode summary="$summary" \
     -d bot=true \
     --data-urlencode token="$(get-token csrf)" \
     -c "$_MW_COOKIE_JAR" \

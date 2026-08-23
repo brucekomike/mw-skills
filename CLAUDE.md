@@ -28,12 +28,27 @@ cp config.sh.example config.sh
 
 ## Available Slash Commands
 
+### Project-level (when this repo is open in Claude Code)
+
 | Command | Description |
 |---------|-------------|
 | `/project:wiki-read <page>` | Read raw wikitext of a page |
 | `/project:wiki-search <query> [limit]` | Search for pages |
 | `/project:wiki-edit <page> <file> [summary]` | Create or update a page |
 | `/project:wiki-exec <page> [args...]` | Execute a wiki page as a shell script |
+
+### User-wide (after running `bash install.sh`)
+
+Global commands are installed to `~/.claude/commands/` and work in any project:
+
+| Command | Description |
+|---------|-------------|
+| `/user:mw-read <page>` | Read raw wikitext of a page |
+| `/user:mw-search <query> [limit]` | Search for pages |
+| `/user:mw-edit <page> <file> [summary]` | Create or update a page |
+| `/user:mw-exec <page> [args...]` | Execute a wiki page as a shell script |
+
+User-wide config is stored in `~/.config/mw-skills/config.sh`.
 
 ## File Structure
 

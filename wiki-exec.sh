@@ -25,7 +25,6 @@ PAGE="$1"
 shift   # remaining positional params are passed to the page script
 
 # Load configuration and helpers
-source "$(dirname "$0")/config.sh"
 source "$(dirname "$0")/lib.sh"
 
 # Authenticate

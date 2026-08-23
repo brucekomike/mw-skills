@@ -72,7 +72,11 @@ Fetch a wiki page and execute its content as a shell script.
 
 ## Claude Code
 
-This repo is formatted as a Claude Code skill set. Open the repo in Claude Code and use the following slash commands:
+This repo is formatted as a Claude Code skill set. There are two ways to use it.
+
+### Project-level (per-repo)
+
+Open the repo directory in Claude Code. The slash commands are available immediately as:
 
 | Command | Example |
 |---------|---------|
@@ -81,4 +85,20 @@ This repo is formatted as a Claude Code skill set. Open the repo in Claude Code 
 | `/project:wiki-edit` | `/project:wiki-edit "My Page" content.txt "initial import"` |
 | `/project:wiki-exec` | `/project:wiki-exec "Scripts/deploy" arg1 arg2` |
 
-Make sure `config.sh` is configured before running any command.
+### User-wide (any project)
+
+Run the install script once to copy the skills to `~/.local/share/mw-skills/` and register them as global Claude Code commands:
+
+```bash
+bash install.sh
+# Then edit ~/.config/mw-skills/config.sh with your wiki credentials
+```
+
+The following commands will then be available in Claude Code from **any** project:
+
+| Command | Example |
+|---------|---------|
+| `/user:mw-read` | `/user:mw-read "Main Page"` |
+| `/user:mw-search` | `/user:mw-search "deployment guide" 20` |
+| `/user:mw-edit` | `/user:mw-edit "My Page" content.txt "initial import"` |
+| `/user:mw-exec` | `/user:mw-exec "Scripts/deploy" arg1 arg2` |
