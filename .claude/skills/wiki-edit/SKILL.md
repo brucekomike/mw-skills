@@ -33,5 +33,9 @@ This is the only skill that requires bot credentials (`MW_USER`/`MW_PASS` from t
 wiki's Special:BotPassword); the others work with just `MW_URL`. If login fails,
 report the error — it usually means missing or wrong credentials.
 
+This is the only skill that logs in. It keeps a persistent cookie (default
+`~/.config/mw-skills/cookies.txt`), so a login is reused and you only log in
+again when the session is missing or has expired.
+
 Configuration: the script looks for a config in this order — `$MW_SKILLS_CONFIG`,
 then `./config.sh`, then `~/.config/mw-skills/config.sh`.

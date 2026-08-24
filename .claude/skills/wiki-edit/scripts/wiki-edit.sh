@@ -4,10 +4,11 @@
 # Usage:
 #   wiki-edit.sh <page-name> <content-file> [summary]
 #
-# Logs in with bot credentials, then:
-#   1. fetches and prints the current page content (so you can review what
-#      will be replaced); a brand-new page reports that no page was found;
-#   2. overwrites the page with the file's contents.
+# Uses a persistent cookie (default ~/.config/mw-skills/cookies.txt), so a
+# previous login is reused and you only log in when the session is missing or
+# stale. Before editing, the current page content is printed so you can review
+# what will be replaced (a brand-new page reports that none was found), then the
+# page is overwritten with the file's contents.
 
 set -euo pipefail
 
@@ -20,16 +21,13 @@ PAGE="$1"
 CONTENT_FILE="$2"
 SUMMARY="${3:-$BOT_INFO}"
 
-# Load configuration and shared helpers
+# Load configuration and shared helpers (sets up the persistent cookie jar)
 source "$(dirname "$0")/../../wiki-read/scripts/lib.sh"
 
 if [[ ! -f "$CONTENT_FILE" ]]; then
   echo "Content file not found: $CONTENT_FILE" >&2
   exit 1
 fi
-
-# Editing is the only skill that needs login (bot credentials).
-mw-login > /dev/null
 
 # Read the page before editing so the current content is visible.
 echo "=== existing page: $PAGE ==="
@@ -41,9 +39,14 @@ else
 fi
 echo
 
-# Overwrite the page with the file's contents.
+# Overwrite the page. Reuse the persistent login session; if the edit is
+# rejected (no/stale session), log in once and retry.
 echo "=== editing page: $PAGE ==="
 result=$(mw-edit-page "$PAGE" "$CONTENT_FILE" "$SUMMARY")
+if [[ "$(jq -r '.edit.result // empty' <<< "$result")" != "Success" ]]; then
+  mw-login > /dev/null
+  result=$(mw-edit-page "$PAGE" "$CONTENT_FILE" "$SUMMARY")
+fi
 printf '%s\n' "$result"
 if [[ "$(jq -r '.edit.result // empty' <<< "$result")" != "Success" ]]; then
   echo "Edit failed: $(jq -r '.error.info // .error.code // "unknown error"' <<< "$result")" >&2

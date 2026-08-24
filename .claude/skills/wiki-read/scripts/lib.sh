@@ -34,12 +34,15 @@ if [[ -n "${MW_PROXY:-}" ]]; then
   _MW_CURL+=(-x "$MW_PROXY")
 fi
 
-# Private cookie jar created once per session with restricted permissions.
-# Each script that sources lib.sh gets its own jar in /tmp.
+# Persistent cookie jar so a login session is reused across runs instead of
+# logging in every time. Default location: ~/.config/mw-skills/cookies.txt.
+# Override with $MW_COOKIE_JAR (full path) or $MW_SKILLS_COOKIE_DIR (dir).
 if [[ -z "${_MW_COOKIE_JAR:-}" ]]; then
-  _MW_COOKIE_JAR=$(mktemp /tmp/mw-skills-cookies-XXXXXX)
-  chmod 600 "$_MW_COOKIE_JAR"
-  trap 'rm -f "$_MW_COOKIE_JAR"' EXIT
+  _MW_COOKIE_JAR="${MW_COOKIE_JAR:-${MW_SKILLS_COOKIE_DIR:-${HOME}/.config/mw-skills}/cookies.txt}"
+  mkdir -p "$(dirname "$_MW_COOKIE_JAR")"
+  if [[ -f "$_MW_COOKIE_JAR" ]]; then
+    chmod 600 "$_MW_COOKIE_JAR"
+  fi
 fi
 
 # Obtain a MediaWiki API token.
