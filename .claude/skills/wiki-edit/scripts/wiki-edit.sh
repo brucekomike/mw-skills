@@ -2,10 +2,10 @@
 # wiki-edit – create or update one or more wiki pages
 #
 # Usage (single page):
-#   ./wiki-edit.sh <page-name> <content-file> [summary]
+#   wiki-edit.sh <page-name> <content-file> [summary]
 #
 # Usage (batch – page list file):
-#   ./wiki-edit.sh --batch <batch-file> [summary]
+#   wiki-edit.sh --batch <batch-file> [summary]
 #
 # Batch file format (one entry per line):
 #   <page-name> <content-file>
@@ -19,10 +19,10 @@ if [[ $# -lt 2 ]]; then
   exit 1
 fi
 
-# Load configuration and helpers
-source "$(dirname "$0")/lib.sh"
+# Load configuration and shared helpers
+source "$(dirname "$0")/../../wiki-read/scripts/lib.sh"
 
-# Authenticate once
+# Editing is the only skill that needs login (bot credentials)
 mw-login > /dev/null
 
 edit_page() {

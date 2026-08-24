@@ -1,6 +1,6 @@
 # mw-skills — MediaWiki Shell Skills
 
-A set of shell skills for interacting with a MediaWiki instance from the command line.
+A set of Claude Code skills for interacting with a MediaWiki instance from the command line.
 Inspired by [brucekomike/mwpm](https://github.com/brucekomike/mwpm).
 
 ## Prerequisites
@@ -14,49 +14,55 @@ Install on Debian/Ubuntu:
 sudo apt update && sudo apt install curl jq
 ```
 
-## Setup (required before using any skill)
+## Setup (optional)
+
+The skills work with no configuration: `wiki-read`, `wiki-search`, and `wiki-plan`
+default to **Wikipedia** (`https://en.wikipedia.org/`). To point them at another wiki,
+either export `MW_URL` for a single call, or create a config file:
 
 ```bash
 cp config.sh.example config.sh
 # Edit config.sh and fill in:
-#   MW_URL  – e.g. https://wiki.example.com/
-#   MW_USER – bot username from Special:BotPassword
-#   MW_PASS – bot password from Special:BotPassword
+#   MW_URL  – e.g. https://www.mediawiki.org/
+#   MW_USER – bot username from Special:BotPassword (wiki-edit only)
+#   MW_PASS – bot password from Special:BotPassword (wiki-edit only)
 ```
 
+Resolution order: `MW_URL` env var → first found config (`$MW_SKILLS_CONFIG`,
+`./config.sh`, `~/.config/mw-skills/config.sh`) → Wikipedia default.
+The bot credentials are needed solely by `wiki-edit`.
 `config.sh` is git-ignored — never commit credentials.
 
-## Available Slash Commands
+## Skills
 
-### Project-level (when this repo is open in Claude Code)
+Each skill is a `SKILL.md` plus the shell scripts it bundles, in `.claude/skills/`.
 
-| Command | Description |
-|---------|-------------|
-| `/project:wiki-read <page>` | Read raw wikitext of a page |
-| `/project:wiki-search <query> [limit]` | Search for pages |
-| `/project:wiki-edit <page> <file> [summary]` | Create or update a page |
-| `/project:wiki-exec <page> [args...]` | Execute a wiki page as a shell script |
+| Skill | Bundled script | Description |
+|-------|----------------|-------------|
+| `wiki-read` | `scripts/wiki-read.sh <page>` | Read raw wikitext of a page |
+| `wiki-search` | `scripts/wiki-search.sh <query> [limit]` | Search for pages (prints `title — snippet` per match) |
+| `wiki-edit` | `scripts/wiki-edit.sh <page> <file> [summary]` or `--batch <file> [summary]` | Create or update a page |
+| `wiki-plan` | `scripts/wiki-plan.sh <page> [args...]` | Follow a wiki page as a plan (worked through in plan mode) |
+
+### Project-level
+
+Skills live in `.claude/skills/` and are available whenever this repo is open in Claude Code.
 
 ### User-wide (after running `bash install.sh`)
 
-Global commands are installed to `~/.claude/commands/` and work in any project:
-
-| Command | Description |
-|---------|-------------|
-| `/user:mw-read <page>` | Read raw wikitext of a page |
-| `/user:mw-search <query> [limit]` | Search for pages |
-| `/user:mw-edit <page> <file> [summary]` | Create or update a page |
-| `/user:mw-exec <page> [args...]` | Execute a wiki page as a shell script |
-
-User-wide config is stored in `~/.config/mw-skills/config.sh`.
+`install.sh` copies the skill folders to `~/.claude/skills/`, making the same four skills
+available in any project. User-wide config is stored in `~/.config/mw-skills/config.sh`.
 
 ## File Structure
 
 | File | Purpose |
 |------|---------|
+| `.claude/skills/wiki-read/` | Read a page (SKILL.md + scripts/) |
+| `.claude/skills/wiki-search/` | Search pages (SKILL.md + scripts/) |
+| `.claude/skills/wiki-edit/` | Edit one or more pages (SKILL.md + scripts/) |
+| `.claude/skills/wiki-plan/` | Follow a page as a plan (SKILL.md + scripts/) |
 | `config.sh.example` | Credentials template |
-| `lib.sh` | Shared MediaWiki API helpers |
-| `wiki-read.sh` | Read a page |
-| `wiki-search.sh` | Search pages |
-| `wiki-edit.sh` | Edit one or more pages |
-| `wiki-exec.sh` | Execute a page as a shell script |
+| `install.sh` | Install the skills to `~/.claude/skills/` |
+
+The shared MediaWiki API helpers live in `.claude/skills/wiki-read/scripts/lib.sh`;
+the other skills source it by relative path.

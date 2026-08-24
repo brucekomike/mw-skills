@@ -8,3 +8,6 @@ export MW_PASS=""       # bot password
 
 # Optional: label embedded in edit summaries
 export BOT_INFO="mw-skills"
+
+# Optional: proxy for slow networks (applies to all requests)
+# export MW_PROXY="http://127.0.0.1:7890"

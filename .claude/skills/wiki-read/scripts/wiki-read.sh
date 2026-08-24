@@ -2,7 +2,7 @@
 # wiki-read – read a specific page from the configured wiki
 #
 # Usage:
-#   ./wiki-read.sh <page-name>
+#   wiki-read.sh <page-name>
 #
 # Prints the raw wikitext of the requested page to stdout.
 # Exit 1 if the page is not found or the wiki returns an error.
@@ -19,9 +19,6 @@ PAGE="$1"
 # Load configuration and helpers
 source "$(dirname "$0")/lib.sh"
 
-# Authenticate
-mw-login > /dev/null
-
 # Fetch and print the page wikitext
 CONTENT=$(mw-read-page "$PAGE")
 
@@ -30,4 +27,4 @@ if [[ -z "$CONTENT" || "$CONTENT" == "null" ]]; then
   exit 1
 fi
 
-echo "$CONTENT"
+printf '%s\n' "$CONTENT"
