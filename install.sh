@@ -6,7 +6,7 @@
 #
 #   wiki-read   <page-name>
 #   wiki-search <query> [limit]
-#   wiki-edit   <page> <file> [summary]  |  --batch <file> [summary]
+#   wiki-edit   <page> <file> [summary]
 #   wiki-plan   <page> [args...]
 #
 # Configuration is read from ~/.config/mw-skills/config.sh (created from the

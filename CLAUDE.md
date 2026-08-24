@@ -41,7 +41,7 @@ Each skill is a `SKILL.md` plus the shell scripts it bundles, in `.claude/skills
 |-------|----------------|-------------|
 | `wiki-read` | `scripts/wiki-read.sh <page>` | Read raw wikitext of a page |
 | `wiki-search` | `scripts/wiki-search.sh <query> [limit]` | Search for pages (prints `title — snippet` per match) |
-| `wiki-edit` | `scripts/wiki-edit.sh <page> <file> [summary]` or `--batch <file> [summary]` | Create or update a page |
+| `wiki-edit` | `scripts/wiki-edit.sh <page> <file> [summary]` | Create or update a page (reads the page before editing) |
 | `wiki-plan` | `scripts/wiki-plan.sh <page> [args...]` | Follow a wiki page as a plan (worked through in plan mode) |
 
 ### Project-level
