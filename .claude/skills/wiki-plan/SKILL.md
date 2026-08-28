@@ -11,6 +11,10 @@ Run the script bundled with this skill to fetch the plan:
 bash ${CLAUDE_SKILL_DIR}/scripts/wiki-plan.sh "<page-name>" [arg1 arg2 ...]
 ```
 
+(`${CLAUDE_SKILL_DIR}` is the directory containing this SKILL.md. Claude Code
+substitutes it automatically; in opencode, replace it with the "Base directory
+for this skill" reported when this skill was loaded.)
+
 The script prints the page wikitext; any arguments after the page name are
 printed as plan parameters ($1, $2, …) and should be substituted into any
 placeholders the plan references.

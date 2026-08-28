@@ -11,6 +11,10 @@ Run the script bundled with this skill:
 bash ${CLAUDE_SKILL_DIR}/scripts/wiki-read.sh "<page-name>"
 ```
 
+(`${CLAUDE_SKILL_DIR}` is the directory containing this SKILL.md. Claude Code
+substitutes it automatically; in opencode, replace it with the "Base directory
+for this skill" reported when this skill was loaded.)
+
 It prints the page's raw wikitext. Show it to the user. If the page is not found or the output is empty, report the error clearly.
 
 Wiki selection: no config is needed. 

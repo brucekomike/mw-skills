@@ -9,9 +9,18 @@ Overwrite one wiki page with the contents of a local file. Before editing, the
 script fetches and prints the current page content so you can review what will
 be replaced. For a brand-new page it reports that no existing page was found.
 
+**Always confirm the page contents with the `/wiki-read` skill before running
+`/wiki-edit`.** Read the target page first, show it to the user, and make sure
+the local content file is a sensible replacement (or that the page is new)
+before overwriting it.
+
 ```bash
 bash ${CLAUDE_SKILL_DIR}/scripts/wiki-edit.sh "<page-name>" <content-file> [summary]
 ```
+
+(`${CLAUDE_SKILL_DIR}` is the directory containing this SKILL.md. Claude Code
+substitutes it automatically; in opencode, replace it with the "Base directory
+for this skill" reported when this skill was loaded.)
 
 - `<page-name>` – the page title to create or update (subpages like `Foo/Bar` work).
 - `<content-file>` – a local file whose contents become the page's wikitext.

@@ -90,6 +90,19 @@ bash install.sh
 The skills are copied to `~/.claude/skills/` and are available from any project.
 They read their configuration from `~/.config/mw-skills/config.sh`.
 
+## opencode
+
+opencode uses the same `SKILL.md` format and discovers Claude-compatible skill
+directories, so no separate copy is needed:
+
+- **Project-level:** open this repo in opencode — it scans `.claude/skills/`.
+- **User-wide:** after `bash install.sh`, opencode also scans `~/.claude/skills/`.
+
+One difference: Claude Code substitutes `${CLAUDE_SKILL_DIR}` inside the skill
+body, while opencode emits the body verbatim. Each SKILL.md therefore instructs
+the agent to resolve it with the "Base directory for this skill" that opencode
+reports when the skill is loaded.
+
 ## File structure
 
 | File | Description |

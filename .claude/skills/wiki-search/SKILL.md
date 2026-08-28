@@ -11,6 +11,10 @@ Run the script bundled with this skill:
 bash ${CLAUDE_SKILL_DIR}/scripts/wiki-search.sh "<query>" [limit]
 ```
 
+(`${CLAUDE_SKILL_DIR}` is the directory containing this SKILL.md. Claude Code
+substitutes it automatically; in opencode, replace it with the "Base directory
+for this skill" reported when this skill was loaded.)
+
 Limit defaults to 10. Output is one line per match: `title — snippet`.
 
 Typical workflow:
