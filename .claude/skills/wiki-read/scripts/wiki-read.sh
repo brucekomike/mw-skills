@@ -32,14 +32,21 @@ if [[ -n "$ERROR" ]]; then
   exit 1
 fi
 
-MATCH_COUNT=$(jq '.query.prefixsearch | length' <<< "$RESULT")
+mapfile -t TITLES < <(jq -r '.query.prefixsearch[].title' <<< "$RESULT")
+MATCH_COUNT="${#TITLES[@]}"
 if [[ "$MATCH_COUNT" -eq 0 ]]; then
   echo "Page not found: $PAGE" >&2
   exit 1
 fi
 
+if [[ "$MATCH_COUNT" -gt 1 ]]; then
+  printf '=== matching pages ===\n'
+  printf -- '- %s\n' "${TITLES[@]}"
+  printf '\n'
+fi
+
 PRINTED=0
-while IFS= read -r title; do
+for title in "${TITLES[@]}"; do
   CONTENT=$(mw-read-page-source "$title")
   if [[ -z "$CONTENT" || "$CONTENT" == "null" ]]; then
     echo "Page is empty: $title" >&2
@@ -50,7 +57,7 @@ while IFS= read -r title; do
   fi
   printf '%s\n' "$CONTENT"
   PRINTED=1
-done < <(jq -r '.query.prefixsearch[].title' <<< "$RESULT")
+done
 
 if [[ "$PRINTED" -eq 0 ]]; then
   echo "All matching pages are empty: $PAGE" >&2

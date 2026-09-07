@@ -16,9 +16,19 @@ substitutes it automatically; in opencode, replace it with the "Base directory
 for this skill" reported when this skill was loaded.)
 
 It searches page titles by prefix, then prints the raw wikitext for each match.
-Exact pages and subpages are supported. Multiple matches are separated by page
-title headings. The limit defaults to 5 matching pages. If the page is not
-found or the output is empty, report the error clearly.
+Exact pages and subpages are supported. Multiple matches begin with a list of
+matching page titles and are separated by page title headings. The limit
+defaults to 5 matching pages. If the page is not found or the output is empty,
+report the error clearly.
+
+To expand templates and parser functions in a template or module page, run:
+
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/wiki-parse.sh "Template:Recipe"
+```
+
+This reads the page source and uses MediaWiki's `action=expandtemplates` API,
+including parser functions such as `#dpl`.
 
 Wiki selection: no config is needed. 
 Default value is configured in a `config.sh`

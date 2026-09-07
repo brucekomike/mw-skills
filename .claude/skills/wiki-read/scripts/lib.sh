@@ -138,6 +138,22 @@ function mw-read-page-source() {
   jq -r '.parse.wikitext["*"]' <<< "$result"
 }
 
+# Expand templates and parser functions in wikitext.
+# Usage: mw-expand-wikitext <wikitext>
+function mw-expand-wikitext() {
+  local text="$1"
+  local result
+  result=$("${_MW_CURL[@]}" -G \
+    -d action=expandtemplates \
+    --data-urlencode "text=$text" \
+    -d prop=wikitext \
+    -d format=json \
+    -c "$_MW_COOKIE_JAR" \
+    -b "$_MW_COOKIE_JAR" \
+    "${MW_URL}api.php")
+  jq -r '.expandtemplates.wikitext | if type == "string" then . else .["*"] end' <<< "$result"
+}
+
 # Find pages whose titles start with a prefix.
 # Usage: mw-prefix-search <prefix> [limit]
 function mw-prefix-search() {

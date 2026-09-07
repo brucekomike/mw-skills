@@ -24,6 +24,12 @@ bash .claude/skills/wiki-read/scripts/wiki-read.sh "Main Page"       # 5 matches
 bash .claude/skills/wiki-read/scripts/wiki-read.sh "Mediawiki" 10    # 10 matches
 ```
 
+Expand a template or module page through MediaWiki's parser:
+
+```bash
+bash .claude/skills/wiki-read/scripts/wiki-parse.sh "Template:Recipe"
+```
+
 ### wiki-search
 
 Search for pages matching a query. Prints one `title — snippet` line per match.
