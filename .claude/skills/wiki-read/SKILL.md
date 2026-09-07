@@ -8,14 +8,17 @@ description: Read the raw wikitext of a specific page from the configured MediaW
 Run the script bundled with this skill:
 
 ```bash
-bash ${CLAUDE_SKILL_DIR}/scripts/wiki-read.sh "<page-name>"
+bash ${CLAUDE_SKILL_DIR}/scripts/wiki-read.sh "<page-name>" [limit]
 ```
 
 (`${CLAUDE_SKILL_DIR}` is the directory containing this SKILL.md. Claude Code
 substitutes it automatically; in opencode, replace it with the "Base directory
 for this skill" reported when this skill was loaded.)
 
-It prints the page's raw wikitext. Show it to the user. If the page is not found or the output is empty, report the error clearly.
+It searches page titles by prefix, then prints the raw wikitext for each match.
+Exact pages and subpages are supported. Multiple matches are separated by page
+title headings. The limit defaults to 5 matching pages. If the page is not
+found or the output is empty, report the error clearly.
 
 Wiki selection: no config is needed. 
 Default value is configured in a `config.sh`

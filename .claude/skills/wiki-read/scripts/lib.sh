@@ -138,6 +138,22 @@ function mw-read-page-source() {
   jq -r '.parse.wikitext["*"]' <<< "$result"
 }
 
+# Find pages whose titles start with a prefix.
+# Usage: mw-prefix-search <prefix> [limit]
+function mw-prefix-search() {
+  local prefix="$1"
+  local limit="${2:-10}"
+  "${_MW_CURL[@]}" -G \
+    --data-urlencode "pssearch=$prefix" \
+    -d action=query \
+    -d list=prefixsearch \
+    -d pslimit="$limit" \
+    -d format=json \
+    -c "$_MW_COOKIE_JAR" \
+    -b "$_MW_COOKIE_JAR" \
+    "${MW_URL}api.php"
+}
+
 # Read a page's wikitext extract, keeping wikitext section headings
 # (redirects are resolved; templates render to their link text).
 # Usage: mw-read-page <page-name>

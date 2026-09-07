@@ -16,10 +16,12 @@ scripts it bundles.
 
 ### wiki-read
 
-Read the wikitext of a specific page.
+Find pages by title prefix and read their raw wikitext, including subpages
+(default limit: 5).
 
 ```bash
-bash .claude/skills/wiki-read/scripts/wiki-read.sh "Main Page"
+bash .claude/skills/wiki-read/scripts/wiki-read.sh "Main Page"       # 5 matches
+bash .claude/skills/wiki-read/scripts/wiki-read.sh "Mediawiki" 10    # 10 matches
 ```
 
 ### wiki-search
