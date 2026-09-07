@@ -155,16 +155,21 @@ function mw-expand-wikitext() {
 }
 
 # Find pages whose titles start with a prefix.
-# Usage: mw-prefix-search <prefix> [limit]
+# Usage: mw-prefix-search <prefix> [limit] [offset]
 function mw-prefix-search() {
   local prefix="$1"
-  local limit="${2:-10}"
-  "${_MW_CURL[@]}" -G \
+  local limit="${2:-100}"
+  local offset="${3:-}"
+  local args=(-G \
     --data-urlencode "pssearch=$prefix" \
     -d action=query \
     -d list=prefixsearch \
     -d pslimit="$limit" \
-    -d format=json \
+    -d format=json)
+  if [[ -n "$offset" ]]; then
+    args+=(-d "psoffset=$offset")
+  fi
+  "${_MW_CURL[@]}" "${args[@]}" \
     -c "$_MW_COOKIE_JAR" \
     -b "$_MW_COOKIE_JAR" \
     "${MW_URL}api.php"

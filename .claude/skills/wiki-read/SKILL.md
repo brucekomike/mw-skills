@@ -17,9 +17,11 @@ for this skill" reported when this skill was loaded.)
 
 It searches page titles by prefix, then prints the raw wikitext for each match.
 Exact pages and subpages are supported. Multiple matches begin with a list of
-matching page titles and are separated by page title headings. The limit
-defaults to 5 matching pages. If the page is not found or the output is empty,
-report the error clearly.
+matching page titles and are separated by page title headings. Prefix results
+are queried in batches of 100; if another batch is available, the script asks
+whether to continue. The limit defaults to 5 pages whose contents are read,
+while the displayed matching-page list includes all discovered results. If the
+page is not found or the output is empty, report the error clearly.
 
 To expand templates and parser functions in a template or module page, run:
 

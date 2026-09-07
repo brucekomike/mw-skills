@@ -24,15 +24,39 @@ fi
 # Load configuration and helpers
 source "$(dirname "$0")/lib.sh"
 
-# Find exact pages and subpages matching the requested title prefix.
-RESULT=$(mw-prefix-search "$PAGE" "$LIMIT")
-ERROR=$(jq -r '.error // empty' <<< "$RESULT")
-if [[ -n "$ERROR" ]]; then
-  jq -r '"mw-read: \(.error.code // "error") – \(.error.info // .error.code // "unknown error")"' <<< "$RESULT" >&2
-  exit 1
-fi
+# Find exact pages and subpages matching the requested title prefix. Search in
+# batches of 100; LIMIT controls how many page contents are read.
+SEARCH_LIMIT=100
+TITLES=()
+OFFSET=""
+while :; do
+  RESULT=$(mw-prefix-search "$PAGE" "$SEARCH_LIMIT" "$OFFSET")
+  ERROR=$(jq -r '.error // empty' <<< "$RESULT")
+  if [[ -n "$ERROR" ]]; then
+    jq -r '"mw-read: \(.error.code // "error") – \(.error.info // .error.code // "unknown error")"' <<< "$RESULT" >&2
+    exit 1
+  fi
 
-mapfile -t TITLES < <(jq -r '.query.prefixsearch[].title' <<< "$RESULT")
+  while IFS= read -r title; do
+    TITLES+=("$title")
+  done < <(jq -r '.query.prefixsearch[].title' <<< "$RESULT")
+
+  NEXT_OFFSET=$(jq -r '.continue.psoffset // empty' <<< "$RESULT")
+  if [[ -z "$NEXT_OFFSET" ]]; then
+    break
+  fi
+  printf 'More matching pages are available (offset %s). Continue? [y/N] ' "$NEXT_OFFSET" >&2
+  if [[ ! -t 0 || ! -t 1 ]]; then
+    printf '\n' >&2
+    break
+  fi
+  read -r ANSWER
+  if [[ ! "$ANSWER" =~ ^[Yy]([Ee][Ss])?$ ]]; then
+    break
+  fi
+  OFFSET="$NEXT_OFFSET"
+done
+
 MATCH_COUNT="${#TITLES[@]}"
 if [[ "$MATCH_COUNT" -eq 0 ]]; then
   echo "Page not found: $PAGE" >&2
@@ -40,13 +64,17 @@ if [[ "$MATCH_COUNT" -eq 0 ]]; then
 fi
 
 if [[ "$MATCH_COUNT" -gt 1 ]]; then
-  printf '=== matching pages ===\n'
+  READ_COUNT="$LIMIT"
+  if [[ "$READ_COUNT" -gt "$MATCH_COUNT" ]]; then
+    READ_COUNT="$MATCH_COUNT"
+  fi
+  printf '=== matching pages (%s found; reading %s) ===\n' "$MATCH_COUNT" "$READ_COUNT"
   printf -- '- %s\n' "${TITLES[@]}"
   printf '\n'
 fi
 
 PRINTED=0
-for title in "${TITLES[@]}"; do
+for title in "${TITLES[@]:0:$LIMIT}"; do
   CONTENT=$(mw-read-page-source "$title")
   if [[ -z "$CONTENT" || "$CONTENT" == "null" ]]; then
     echo "Page is empty: $title" >&2

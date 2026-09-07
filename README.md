@@ -16,8 +16,10 @@ scripts it bundles.
 
 ### wiki-read
 
-Find pages by title prefix and read their raw wikitext, including subpages
-(default limit: 5).
+Find pages by title prefix and read their raw wikitext, including subpages.
+Prefix results are fetched in batches of 100; the optional limit controls the
+number of page contents read (default: 5), while the matching-page list is
+complete for the batches you approve.
 
 ```bash
 bash .claude/skills/wiki-read/scripts/wiki-read.sh "Main Page"       # 5 matches
