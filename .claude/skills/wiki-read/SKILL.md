@@ -22,4 +22,6 @@ Default value is configured in a `config.sh`
 but to note that user may give a url in simple form even without protocol scheme.
 
 - To query a different wiki, export `MW_URL` inline: `MW_URL="https://www.mediawiki.org/" bash ${CLAUDE_SKILL_DIR}/scripts/wiki-read.sh "<page-name>"`
-- Or use a persistent config (first found wins): `$MW_SKILLS_CONFIG`, then `./config.sh`, then `~/.config/mw-skills/config.sh`.
+- `MW_URL` is always a manual override and takes precedence over the selected site's URL.
+- For multiple configured sites, set `MW_SITE=mediawiki`; profiles use `MW_SITE_MEDIAWIKI_URL`, `MW_SITE_MEDIAWIKI_USER`, and `MW_SITE_MEDIAWIKI_PASS`.
+- Persistent config is selected in this order: `$MW_SKILLS_CONFIG`, then `./config.sh`, then `~/.config/mw-skills/config.sh`.

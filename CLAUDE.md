@@ -26,10 +26,13 @@ cp config.sh.example config.sh
 #   MW_URL  – e.g. https://www.mediawiki.org/
 #   MW_USER – bot username from Special:BotPassword (wiki-edit only)
 #   MW_PASS – bot password from Special:BotPassword (wiki-edit only)
+# For multiple sites, define MW_SITE_NAME_URL/USER/PASS and select one with MW_SITE.
 ```
 
-Resolution order: `MW_URL` env var → first found config (`$MW_SKILLS_CONFIG`,
-`./config.sh`, `~/.config/mw-skills/config.sh`) → Wikipedia default.
+Resolution order: first found config (`$MW_SKILLS_CONFIG`, `./config.sh`,
+`~/.config/mw-skills/config.sh`), then explicit environment overrides. MW_SITE
+selects a named profile; the default is Wikipedia.
+An explicit MW_URL always manually overrides the selected profile URL.
 The bot credentials are needed solely by `wiki-edit`.
 `config.sh` is git-ignored — never commit credentials.
 

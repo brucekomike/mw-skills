@@ -10,8 +10,9 @@
 #   wiki-plan   <page> [args...]
 #
 # Configuration is read from ~/.config/mw-skills/config.sh (created from the
-# bundled config.sh.example if it does not exist yet). Only MW_URL is
-# required; MW_USER/MW_PASS are needed solely by wiki-edit.
+# bundled config.sh.example if it does not exist yet). Define
+# MW_SITE_NAME_URL/USER/PASS profiles for multiple sites and select one with
+# MW_SITE. Only a URL is required; credentials are needed solely by wiki-edit.
 
 set -euo pipefail
 
@@ -51,5 +52,5 @@ fi
 echo ""
 echo "==> Installed skills: wiki-read, wiki-search, wiki-edit, wiki-plan"
 echo "==> Next step: edit ${CONFIG_DIR}/config.sh"
-echo "    (MW_URL required; MW_USER/MW_PASS needed only for wiki-edit)."
+echo "    (MW_URL or a selected MW_SITE profile required; credentials only for wiki-edit)."
 echo "    Then use the skills from any project, e.g. 'read wiki page X'."

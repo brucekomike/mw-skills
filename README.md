@@ -65,10 +65,13 @@ either export `MW_URL` for a single call, or create a config file:
 cp config.sh.example config.sh
 # Edit config.sh and fill in MW_URL.
 # For wiki-edit, also fill in MW_USER and MW_PASS from Special:BotPassword.
+# Multiple sites can use MW_SITE_NAME_URL/USER/PASS profiles and MW_SITE=name.
 ```
 
-Resolution order: `MW_URL` env var → first found config
-(`$MW_SKILLS_CONFIG`, `./config.sh`, `~/.config/mw-skills/config.sh`) → Wikipedia.
+Resolution order: first found config (`$MW_SKILLS_CONFIG`, `./config.sh`,
+`~/.config/mw-skills/config.sh`), then explicit environment overrides. `MW_SITE`
+selects a named profile; `MW_URL`/`MW_USER`/`MW_PASS` override it. Each site has
+its own cookie jar.
 
 ## Claude Code
 

@@ -2,9 +2,21 @@
 # Copy this file to config.sh and fill in the values.
 # Obtain bot credentials from Special:BotPassword on your wiki.
 
+# Single/default site (backward-compatible form)
 export MW_URL=""        # wiki base URL ending with /  e.g. https://wiki.example.com/
 export MW_USER=""       # bot username  e.g. MyBot@BotPassword
 export MW_PASS=""       # bot password
+
+# Multiple sites: set MW_SITE to one profile name (case-insensitive), either
+# in this file or per command: MW_SITE=mediawiki bash ...
+# Profile names must contain only letters, numbers, and underscores.
+# export MW_SITE="mediawiki"
+# export MW_SITE_MEDIAWIKI_URL="https://www.mediawiki.org/w/"
+# export MW_SITE_MEDIAWIKI_USER="MyBot@BotPassword"
+# export MW_SITE_MEDIAWIKI_PASS="bot-password"
+# export MW_SITE_PRIVATE_URL="https://wiki.example.com/w/"
+# export MW_SITE_PRIVATE_USER="MyBot@BotPassword"
+# export MW_SITE_PRIVATE_PASS="bot-password"
 
 # Optional: label embedded in edit summaries
 export BOT_INFO="mw-skills"
