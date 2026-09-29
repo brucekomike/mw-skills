@@ -1,6 +1,7 @@
 # mw-skills
 
-A set of Claude Code skills for reading, searching, editing, and planning from MediaWiki pages.
+A set of Claude Code skills for reading, searching, browsing categories, editing,
+and planning from MediaWiki pages.
 Inspired by [brucekomike/mwpm](https://github.com/brucekomike/mwpm).
 
 ## Prerequisites
@@ -41,6 +42,18 @@ bash .claude/skills/wiki-search/scripts/wiki-search.sh "installation guide"     
 bash .claude/skills/wiki-search/scripts/wiki-search.sh "installation guide" 20     # up to 20 results
 ```
 
+### wiki-category
+
+List pages in a category, list subcategories, find pages in multiple
+categories, or search category names. Prints one title per line.
+
+```bash
+bash .claude/skills/wiki-category/scripts/wiki-category.sh "Linux"              # pages in Category:Linux
+bash .claude/skills/wiki-category/scripts/wiki-category.sh "Linux" --subcategories
+bash .claude/skills/wiki-category/scripts/wiki-category.sh "Linux" --in "Debian"
+bash .claude/skills/wiki-category/scripts/wiki-category.sh --search "Linux"     # search category names
+```
+
 ### wiki-edit
 
 Create or update a wiki page from a local file. The only skill that needs bot credentials.
@@ -67,9 +80,9 @@ bash .claude/skills/wiki-plan/scripts/wiki-plan.sh "Plans/deploy" arg1 arg2
 
 ## Setup (optional)
 
-The skills work with no configuration: `wiki-read`, `wiki-search`, and `wiki-plan`
-default to **Wikipedia** (`https://en.wikipedia.org/`). To point them at another wiki,
-either export `MW_URL` for a single call, or create a config file:
+The skills work with no configuration: `wiki-read`, `wiki-search`, `wiki-category`,
+and `wiki-plan` default to **Wikipedia** (`https://en.wikipedia.org/`). To point them
+at another wiki, either export `MW_URL` for a single call, or create a config file:
 
 ```bash
 cp config.sh.example config.sh
@@ -89,9 +102,9 @@ Skills are available in two scopes:
 
 ### Project-level
 
-Open this repo in Claude Code — the four skills (`wiki-read`, `wiki-search`,
-`wiki-edit`, `wiki-plan`) are available, and the skill scripts resolve `./config.sh`
-in the repo root.
+Open this repo in Claude Code — the five skills (`wiki-read`, `wiki-search`,
+`wiki-category`, `wiki-edit`, `wiki-plan`) are available, and the skill scripts
+resolve `./config.sh` in the repo root.
 
 ### User-wide (any project)
 
@@ -122,6 +135,7 @@ reports when the skill is loaded.
 |------|-------------|
 | `.claude/skills/wiki-read/` | Read a wiki page (SKILL.md + scripts/) |
 | `.claude/skills/wiki-search/` | Search wiki pages (SKILL.md + scripts/) |
+| `.claude/skills/wiki-category/` | Browse and search categories (SKILL.md + scripts/) |
 | `.claude/skills/wiki-edit/` | Edit one or more wiki pages (SKILL.md + scripts/) |
 | `.claude/skills/wiki-plan/` | Follow a wiki page as a plan (SKILL.md + scripts/) |
 | `config.sh.example` | Template for wiki connection settings |

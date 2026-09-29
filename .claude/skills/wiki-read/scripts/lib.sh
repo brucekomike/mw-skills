@@ -211,6 +211,56 @@ function mw-search() {
     "${MW_URL}api.php"
 }
 
+# List category members (pages or subcategories).
+# Usage: mw-category <category> [limit] [pages|subcategories]
+# Returns the raw categorymembers JSON for a single category.
+# The "Category:" prefix is added automatically if missing.
+# Sends both the current (cm*) and legacy (cat*) parameter names so the
+# request works on both newer and older MediaWiki versions; unrecognized
+# names are ignored as warnings.
+function mw-category() {
+  local category="$1"
+  local limit="${2:-100}"
+  local kind="${3:-pages}"
+  local cmtype
+  if [[ "$kind" == "subcategories" ]]; then
+    cmtype="subcat"
+  else
+    cmtype="page"
+  fi
+  [[ "$category" == Category:* ]] || category="Category:$category"
+  "${_MW_CURL[@]}" -X POST \
+    --data-urlencode "cmtitle=$category" \
+    --data-urlencode "catfrom=$category" \
+    --data-urlencode "cmtype=$cmtype" \
+    --data-urlencode "cattype=$cmtype" \
+    --data-urlencode "cmlimit=$limit" \
+    --data-urlencode "catlimit=$limit" \
+    -d action=query \
+    -d list=categorymembers \
+    -d format=json \
+    -c "$_MW_COOKIE_JAR" \
+    -b "$_MW_COOKIE_JAR" \
+    "${MW_URL}api.php"
+}
+
+# Search category titles (Category: namespace, id 14).
+# Usage: mw-search-categories <query> [limit]
+function mw-search-categories() {
+  local query="$1"
+  local limit="${2:-10}"
+  "${_MW_CURL[@]}" -G \
+    --data-urlencode "srsearch=$query" \
+    -d action=query \
+    -d list=search \
+    -d srnamespace=14 \
+    -d srlimit="$limit" \
+    -d format=json \
+    -c "$_MW_COOKIE_JAR" \
+    -b "$_MW_COOKIE_JAR" \
+    "${MW_URL}api.php"
+}
+
 # Edit (create or update) a wiki page from a file.
 # Usage: mw-edit-page <page-name> <content-file> [summary]
 function mw-edit-page() {

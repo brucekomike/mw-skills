@@ -16,9 +16,9 @@ sudo apt update && sudo apt install curl jq
 
 ## Setup (optional)
 
-The skills work with no configuration: `wiki-read`, `wiki-search`, and `wiki-plan`
-default to **Wikipedia** (`https://en.wikipedia.org/`). To point them at another wiki,
-either export `MW_URL` for a single call, or create a config file:
+The skills work with no configuration: `wiki-read`, `wiki-search`, `wiki-category`,
+and `wiki-plan` default to **Wikipedia** (`https://en.wikipedia.org/`). To point them at
+another wiki, either export `MW_URL` for a single call, or create a config file:
 
 ```bash
 cp config.sh.example config.sh
@@ -45,6 +45,7 @@ Each skill is a `SKILL.md` plus the shell scripts it bundles, in `.claude/skills
 | `wiki-read` | `scripts/wiki-read.sh <page> [limit]` | Prefix-search and read raw wikitext (default 5) |
 | `wiki-parse` | `scripts/wiki-parse.sh <page>` | Expand templates and parser functions |
 | `wiki-search` | `scripts/wiki-search.sh <query> [limit]` | Search for pages (prints `title — snippet` per match) |
+| `wiki-category` | `scripts/wiki-category.sh <category> [limit]` | List category pages / `--subcategories` / `--in <cat2>` / `--search <term>` |
 | `wiki-edit` | `scripts/wiki-edit.sh <page> <file> [summary]` | Create or update a page (reads the page before editing) |
 | `wiki-plan` | `scripts/wiki-plan.sh <page> [args...]` | Follow a wiki page as a plan (worked through in plan mode) |
 
@@ -54,7 +55,7 @@ Skills live in `.claude/skills/` and are available whenever this repo is open in
 
 ### User-wide (after running `bash install.sh`)
 
-`install.sh` copies the skill folders to `~/.claude/skills/`, making the same four skills
+`install.sh` copies the skill folders to `~/.claude/skills/`, making the same five skills
 available in any project. User-wide config is stored in `~/.config/mw-skills/config.sh`.
 
 ## File Structure
@@ -63,6 +64,7 @@ available in any project. User-wide config is stored in `~/.config/mw-skills/con
 |------|---------|
 | `.claude/skills/wiki-read/` | Read a page (SKILL.md + scripts/) |
 | `.claude/skills/wiki-search/` | Search pages (SKILL.md + scripts/) |
+| `.claude/skills/wiki-category/` | Browse and search categories (SKILL.md + scripts/) |
 | `.claude/skills/wiki-edit/` | Edit one or more pages (SKILL.md + scripts/) |
 | `.claude/skills/wiki-plan/` | Follow a page as a plan (SKILL.md + scripts/) |
 | `config.sh.example` | Credentials template |

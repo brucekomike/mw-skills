@@ -4,10 +4,11 @@
 # Copies each skill folder to ~/.claude/skills/ so the skills are available
 # from any project:
 #
-#   wiki-read   <page-name>
-#   wiki-search <query> [limit]
-#   wiki-edit   <page> <file> [summary]
-#   wiki-plan   <page> [args...]
+#   wiki-read      <page-name>
+#   wiki-search    <query> [limit]
+#   wiki-category  <category> [limit] | --search <term> [limit]
+#   wiki-edit      <page> <file> [summary]
+#   wiki-plan      <page> [args...]
 #
 # Configuration is read from ~/.config/mw-skills/config.sh (created from the
 # bundled config.sh.example if it does not exist yet). Define
@@ -34,7 +35,7 @@ done
 rm -rf "${SKILLS_DST}/wiki-exec"
 
 # Copy each skill folder (SKILL.md + bundled scripts)
-for skill in wiki-read wiki-search wiki-edit wiki-plan; do
+for skill in wiki-read wiki-search wiki-category wiki-edit wiki-plan; do
   rm -rf "${SKILLS_DST}/${skill}"
   cp -R "${SKILLS_SRC}/${skill}" "${SKILLS_DST}/${skill}"
   echo "    Installed skill: ${skill}"
@@ -50,7 +51,7 @@ else
 fi
 
 echo ""
-echo "==> Installed skills: wiki-read, wiki-search, wiki-edit, wiki-plan"
+echo "==> Installed skills: wiki-read, wiki-search, wiki-category, wiki-edit, wiki-plan"
 echo "==> Next step: edit ${CONFIG_DIR}/config.sh"
 echo "    (MW_URL or a selected MW_SITE profile required; credentials only for wiki-edit)."
 echo "    Then use the skills from any project, e.g. 'read wiki page X'."
