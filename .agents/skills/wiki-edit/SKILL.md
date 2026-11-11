@@ -1,6 +1,7 @@
 ---
 name: wiki-edit
-description: Overwrite a single MediaWiki page from a local file. Logs in with bot credentials and shows the current page content before editing.
+description: Create or replace a MediaWiki page from a local file. Use only when asked to edit a wiki page; review the current page and get approval before writing.
+compatibility: Requires Bash, curl, jq, network access to a MediaWiki API, and a locally configured BotPassword for edits.
 ---
 
 # Edit wiki pages (single-page upload)
@@ -9,18 +10,19 @@ Overwrite one wiki page with the contents of a local file. Before editing, the
 script fetches and prints the current page content so you can review what will
 be replaced. For a brand-new page it reports that no existing page was found.
 
-**Always confirm the page contents with the `/wiki-read` skill before running
-`/wiki-edit`.** Read the target page first, show it to the user, and make sure
-the local content file is a sensible replacement (or that the page is new)
-before overwriting it.
+Before editing, use `wiki-read` to fetch the target page, show the current
+content to the user, and get approval for the replacement. Confirm that the
+local content file is the intended complete replacement (or that the page is
+new) before invoking this script. The script overwrites the page; it does not
+merge content.
 
 ```bash
-bash ${CLAUDE_SKILL_DIR}/scripts/wiki-edit.sh "<page-name>" <content-file> [summary]
+bash <skill-directory>/scripts/wiki-edit.sh "<page-name>" <content-file> [summary]
 ```
 
-(`${CLAUDE_SKILL_DIR}` is the directory containing this SKILL.md. Claude Code
-substitutes it automatically; in opencode, replace it with the "Base directory
-for this skill" reported when this skill was loaded.)
+Resolve the script path relative to the directory containing this SKILL.md
+using the path information supplied by your agent runtime. Do not rely on
+client-specific skill-path variables.
 
 - `<page-name>` – the page title to create or update (subpages like `Foo/Bar` work).
 - `<content-file>` – a local file whose contents become the page's wikitext.
@@ -38,9 +40,12 @@ to the user and ask them to resolve it (grant the bot the needed permission on t
 wiki, or fix `MW_USER`/`MW_PASS`). Only re-run the script once they confirm the
 permission has been granted.
 
-This is the only skill that requires bot credentials (`MW_USER`/`MW_PASS` from the
-wiki's Special:BotPassword); the others work with just `MW_URL`. If login fails,
-report the error — it usually means missing or wrong credentials.
+This is the only skill that requires bot credentials (`MW_USER`/`MW_PASS` from
+the wiki's Special:BotPassword); the others work with just `MW_URL`. Keep the
+BotPassword in the ignored local config or a secret manager, never in this skill,
+the repository, or an agent prompt. Prefer a dedicated bot with only the rights
+needed to edit the intended pages. If login fails, report the error — it usually
+means missing or wrong credentials.
 
 This is the only skill that logs in. It keeps a persistent cookie (default
 `~/.config/mw-skills/cookies.txt`), so a login is reused and you only log in

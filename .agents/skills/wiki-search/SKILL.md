@@ -1,19 +1,20 @@
 ---
 name: wiki-search
 description: Search for pages on a MediaWiki wiki (default Wikipedia, or MW_URL / configured wiki) using local curl against the MediaWiki API (no server-side WebSearch/WebFetch). Use when the user asks to search the wiki, look up a page/article on that wiki, or find pages matching a query.
+compatibility: Requires Bash, curl, jq, and network access to a MediaWiki API.
 ---
 
 # Search the wiki
 
-Run the script bundled with this skill:
+Run the bundled script from this skill's directory. Resolve the directory from
+the loaded `SKILL.md` path; do not assume a client-specific variable or the
+current working directory:
 
 ```bash
-bash ${CLAUDE_SKILL_DIR}/scripts/wiki-search.sh "<query>" [limit]
+bash <skill-directory>/scripts/wiki-search.sh "<query>" [limit]
 ```
 
-(`${CLAUDE_SKILL_DIR}` is the directory containing this SKILL.md. Claude Code
-substitutes it automatically; in opencode, replace it with the "Base directory
-for this skill" reported when this skill was loaded.)
+The skill directory is the parent directory containing this SKILL.md.
 
 Limit defaults to 10. Output is one line per match: `title — snippet`.
 
@@ -28,13 +29,12 @@ Notes:
 
 - Search results with an empty snippet are still valid matches — pull the page to see its content.
 - Titles may be non-ASCII (e.g. Chinese); the script URL-encodes everything, so pass them through as-is.
-- If requests time out (the wiki can be slow), retry with a local proxy: `MW_PROXY="http://127.0.0.1:7890" bash ${CLAUDE_SKILL_DIR}/scripts/wiki-search.sh ...`. Do not use the proxy by default.
+- If requests time out (the wiki can be slow), retry with a configured local proxy: `MW_PROXY="http://127.0.0.1:7890" bash <skill-directory>/scripts/wiki-search.sh ...`. Do not use the proxy by default.
 
 If it printed `No results for: ...`, say so clearly.
 
-Wiki selection: no config is needed. 
-Default value is configured in a `config.sh`
-but to note that user may give a url in simple form even without protocol scheme.
+The default wiki is Wikipedia. Set `MW_URL` for a one-off target or select a
+configured profile with `MW_SITE`.
 
-- To search a different wiki, export `MW_URL` inline: `MW_URL="https://www.mediawiki.org/w/" bash ${CLAUDE_SKILL_DIR}/scripts/wiki-search.sh "<query>"`
+- To search a different wiki, export `MW_URL` inline: `MW_URL="https://www.mediawiki.org/w/" bash <skill-directory>/scripts/wiki-search.sh "<query>"`
 - Or use a persistent config (first found wins): `$MW_SKILLS_CONFIG`, then `./config.sh`, then `~/.config/mw-skills/config.sh`.

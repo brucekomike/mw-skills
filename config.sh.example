@@ -1,6 +1,8 @@
 # MediaWiki connection settings
-# Copy this file to config.sh and fill in the values.
-# Obtain bot credentials from Special:BotPassword on your wiki.
+# Copy this file to config.sh and fill in the values. config.sh is git-ignored;
+# keep it mode 600 and never upload it with an agent toolkit.
+# Obtain a dedicated, least-privilege bot account from Special:BotPassword.
+# MW_USER/MW_PASS are used only by wiki-edit; read skills need only MW_URL.
 
 # Single/default site (backward-compatible form)
 export MW_URL=""        # wiki base URL ending with /  e.g. https://wiki.example.com/

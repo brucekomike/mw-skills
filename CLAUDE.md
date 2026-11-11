@@ -1,7 +1,9 @@
-# mw-skills — MediaWiki Shell Skills
+# mw-skills — MediaWiki Agent Skills
 
-A set of Claude Code skills for interacting with a MediaWiki instance from the command line.
+A cross-agent set of skills for interacting with a MediaWiki instance from the command line.
 Inspired by [brucekomike/mwpm](https://github.com/brucekomike/mwpm).
+
+@AGENTS.md
 
 ## Prerequisites
 
@@ -38,7 +40,8 @@ The bot credentials are needed solely by `wiki-edit`.
 
 ## Skills
 
-Each skill is a `SKILL.md` plus the shell scripts it bundles, in `.claude/skills/`.
+Each skill is a standard `SKILL.md` plus bundled scripts in `.agents/skills/`.
+Claude Code uses `.claude/skills/`, a compatibility symlink to that directory.
 
 | Skill | Bundled script | Description |
 |-------|----------------|-------------|
@@ -51,24 +54,27 @@ Each skill is a `SKILL.md` plus the shell scripts it bundles, in `.claude/skills
 
 ### Project-level
 
-Skills live in `.claude/skills/` and are available whenever this repo is open in Claude Code.
+Skills live in `.agents/skills/` for shared Agent Skills clients. Claude Code
+loads the same files through `.claude/skills/`.
 
 ### User-wide (after running `bash install.sh`)
 
-`install.sh` copies the skill folders to `~/.claude/skills/`, making the same five skills
-available in any project. User-wide config is stored in `~/.config/mw-skills/config.sh`.
+`install.sh` installs skills to `~/.agents/skills/` and links Claude Code's
+`~/.claude/skills/` entries there. User-wide config is stored in
+`~/.config/mw-skills/config.sh`.
 
 ## File Structure
 
 | File | Purpose |
 |------|---------|
-| `.claude/skills/wiki-read/` | Read a page (SKILL.md + scripts/) |
-| `.claude/skills/wiki-search/` | Search pages (SKILL.md + scripts/) |
-| `.claude/skills/wiki-category/` | Browse and search categories (SKILL.md + scripts/) |
-| `.claude/skills/wiki-edit/` | Edit one or more pages (SKILL.md + scripts/) |
-| `.claude/skills/wiki-plan/` | Follow a page as a plan (SKILL.md + scripts/) |
+| `.agents/skills/wiki-read/` | Read a page (SKILL.md + scripts/) |
+| `.agents/skills/wiki-search/` | Search pages (SKILL.md + scripts/) |
+| `.agents/skills/wiki-category/` | Browse and search categories (SKILL.md + scripts/) |
+| `.agents/skills/wiki-edit/` | Edit a page (SKILL.md + scripts/) |
+| `.agents/skills/wiki-plan/` | Follow an approved procedure (SKILL.md + scripts/) |
+| `.claude/skills` | Claude Code compatibility symlink |
 | `config.sh.example` | Credentials template |
-| `install.sh` | Install the skills to `~/.claude/skills/` |
+| `install.sh` | Install shared skills and Claude compatibility links |
 
-The shared MediaWiki API helpers live in `.claude/skills/wiki-read/scripts/lib.sh`;
+The shared MediaWiki API helpers live in `.agents/skills/wiki-read/scripts/lib.sh`;
 the other skills source it by relative path.

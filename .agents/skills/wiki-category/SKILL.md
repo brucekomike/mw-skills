@@ -1,42 +1,44 @@
 ---
 name: wiki-category
 description: List pages or subcategories in a MediaWiki wiki category, search category names, and list pages belonging to multiple categories. Use when the user asks what's in a category, to browse categories, to find subcategories, or to find pages in a specific category (e.g. "what articles are in Category:Linux distros").
+compatibility: Requires Bash, curl, jq, and network access to a MediaWiki API.
 ---
 
 # List wiki categories
 
-Run the script bundled with this skill:
+Run the bundled script from this skill's directory. Resolve the directory from
+the loaded `SKILL.md` path; do not assume a client-specific variable or the
+current working directory:
 
 ```bash
-bash ${CLAUDE_SKILL_DIR}/scripts/wiki-category.sh "<category>" [limit]
+bash <skill-directory>/scripts/wiki-category.sh "<category>" [limit]
 ```
 
-(`${CLAUDE_SKILL_DIR}` is the directory containing this SKILL.md. Claude Code
-substitutes it automatically; in opencode, replace it with the "Base directory
-for this skill" reported when this skill was loaded.)
+Resolve script paths relative to the directory containing this SKILL.md using
+the path information supplied by your agent runtime.
 
 ## Modes
 
 List pages in a category (default limit 100):
 ```bash
-bash ${CLAUDE_SKILL_DIR}/scripts/wiki-category.sh "Category:Linux distros" 20
+bash <skill-directory>/scripts/wiki-category.sh "Category:Linux distros" 20
 # or without the prefix:
-bash ${CLAUDE_SKILL_DIR}/scripts/wiki-category.sh "Linux distros" 20
+bash <skill-directory>/scripts/wiki-category.sh "Linux distros" 20
 ```
 
 List subcategories of a category:
 ```bash
-bash ${CLAUDE_SKILL_DIR}/scripts/wiki-category.sh "Linux distros" --subcategories
+bash <skill-directory>/scripts/wiki-category.sh "Linux distros" --subcategories
 ```
 
 List pages that belong to BOTH categories (intersection):
 ```bash
-bash ${CLAUDE_SKILL_DIR}/scripts/wiki-category.sh "Linux distros" --in "Free software"
+bash <skill-directory>/scripts/wiki-category.sh "Linux distros" --in "Free software"
 ```
 
 Search category titles:
 ```bash
-bash ${CLAUDE_SKILL_DIR}/scripts/wiki-category.sh --search "Linux" 10
+bash <skill-directory>/scripts/wiki-category.sh --search "Linux" 10
 ```
 
 ## Notes
@@ -51,11 +53,10 @@ bash ${CLAUDE_SKILL_DIR}/scripts/wiki-category.sh --search "Linux" 10
 - Intersection mode fetches up to 500 pages per category — it may miss matches
   beyond that cap.
 - If requests time out (the wiki can be slow), retry with a local proxy:
-  `MW_PROXY="http://127.0.0.1:7890" bash ${CLAUDE_SKILL_DIR}/scripts/wiki-category.sh ...`.
+  `MW_PROXY="http://127.0.0.1:7890" bash <skill-directory>/scripts/wiki-category.sh ...`.
   Do not use the proxy by default.
 
 If it printed `No results for category: ...`, say so clearly.
 
-Wiki selection: no config is needed. Default is Wikipedia or the configured
-wiki from `config.sh`. To target another wiki, export `MW_URL` inline:
-`MW_URL="https://ossmedia.cn/" bash ${CLAUDE_SKILL_DIR}/scripts/wiki-category.sh "Category:..."`.
+The default wiki is Wikipedia. To target another wiki, export `MW_URL` inline:
+`MW_URL="https://ossmedia.cn/" bash <skill-directory>/scripts/wiki-category.sh "Category:..."`.

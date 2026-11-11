@@ -1,7 +1,7 @@
 # mw-skills
 
-A set of Claude Code skills for reading, searching, browsing categories, editing,
-and planning from MediaWiki pages.
+A cross-agent set of Agent Skills for reading, searching, browsing categories,
+editing, and planning from MediaWiki pages.
 Inspired by [brucekomike/mwpm](https://github.com/brucekomike/mwpm).
 
 ## Prerequisites
@@ -12,7 +12,7 @@ curl jq
 
 ## Skills
 
-Each skill is a folder under `.claude/skills/` containing a `SKILL.md` and the shell
+Each skill is a folder under `.agents/skills/` containing a standard `SKILL.md` and the shell
 scripts it bundles.
 
 ### wiki-read
@@ -23,14 +23,14 @@ number of page contents read (default: 5), while the matching-page list is
 complete for the batches you approve.
 
 ```bash
-bash .claude/skills/wiki-read/scripts/wiki-read.sh "Main Page"       # 5 matches
-bash .claude/skills/wiki-read/scripts/wiki-read.sh "Mediawiki" 10    # 10 matches
+bash .agents/skills/wiki-read/scripts/wiki-read.sh "Main Page"       # 5 matches
+bash .agents/skills/wiki-read/scripts/wiki-read.sh "Mediawiki" 10    # 10 matches
 ```
 
 Expand a template or module page through MediaWiki's parser:
 
 ```bash
-bash .claude/skills/wiki-read/scripts/wiki-parse.sh "Template:Recipe"
+bash .agents/skills/wiki-read/scripts/wiki-parse.sh "Template:Recipe"
 ```
 
 ### wiki-search
@@ -38,8 +38,8 @@ bash .claude/skills/wiki-read/scripts/wiki-parse.sh "Template:Recipe"
 Search for pages matching a query. Prints one `title — snippet` line per match.
 
 ```bash
-bash .claude/skills/wiki-search/scripts/wiki-search.sh "installation guide"       # default 10 results
-bash .claude/skills/wiki-search/scripts/wiki-search.sh "installation guide" 20     # up to 20 results
+bash .agents/skills/wiki-search/scripts/wiki-search.sh "installation guide"       # default 10 results
+bash .agents/skills/wiki-search/scripts/wiki-search.sh "installation guide" 20     # up to 20 results
 ```
 
 ### wiki-category
@@ -48,22 +48,20 @@ List pages in a category, list subcategories, find pages in multiple
 categories, or search category names. Prints one title per line.
 
 ```bash
-bash .claude/skills/wiki-category/scripts/wiki-category.sh "Linux"              # pages in Category:Linux
-bash .claude/skills/wiki-category/scripts/wiki-category.sh "Linux" --subcategories
-bash .claude/skills/wiki-category/scripts/wiki-category.sh "Linux" --in "Debian"
-bash .claude/skills/wiki-category/scripts/wiki-category.sh --search "Linux"     # search category names
+bash .agents/skills/wiki-category/scripts/wiki-category.sh "Linux"              # pages in Category:Linux
+bash .agents/skills/wiki-category/scripts/wiki-category.sh "Linux" --subcategories
+bash .agents/skills/wiki-category/scripts/wiki-category.sh "Linux" --in "Debian"
+bash .agents/skills/wiki-category/scripts/wiki-category.sh --search "Linux"     # search category names
 ```
 
 ### wiki-edit
 
-Create or update a wiki page from a local file. The only skill that needs bot credentials.
+Create or replace one wiki page from a local file. The only skill that needs bot credentials.
 
 ```bash
 # Single page
-bash .claude/skills/wiki-edit/scripts/wiki-edit.sh "My Page" content.txt "optional edit summary"
+bash .agents/skills/wiki-edit/scripts/wiki-edit.sh "My Page" content.txt "optional edit summary"
 
-# Batch (one "page-name content-file" pair per line)
-bash .claude/skills/wiki-edit/scripts/wiki-edit.sh --batch pages.txt "batch import"
 ```
 
 ### wiki-plan
@@ -75,7 +73,7 @@ it in plan mode — arguments after the page name are plan parameters.
 > from wikis you fully control and have reviewed.
 
 ```bash
-bash .claude/skills/wiki-plan/scripts/wiki-plan.sh "Plans/deploy" arg1 arg2
+bash .agents/skills/wiki-plan/scripts/wiki-plan.sh "Plans/deploy" arg1 arg2
 ```
 
 ## Setup (optional)
@@ -96,47 +94,52 @@ Resolution order: first found config (`$MW_SKILLS_CONFIG`, `./config.sh`,
 selects a named profile; `MW_URL`/`MW_USER`/`MW_PASS` override it. Each site has
 its own cookie jar.
 
-## Claude Code
+### BotPassword handling
 
-Skills are available in two scopes:
+`wiki-read`, `wiki-search`, `wiki-category`, and `wiki-plan` need only a wiki
+URL. `wiki-edit` uses a dedicated MediaWiki BotPassword. Keep it in the ignored
+`config.sh` or a secret manager, restrict it to the rights the bot needs, and
+never commit or upload that file with a toolkit. The installer creates the
+user config with mode `600`.
 
-### Project-level
+For a remote agent sandbox, prefer a small authenticated MCP gateway that keeps
+the BotPassword on the host and exposes only the wiki operations the agent
+needs. Do not copy the BotPassword into the sandbox environment or prompt.
 
-Open this repo in Claude Code — the five skills (`wiki-read`, `wiki-search`,
-`wiki-category`, `wiki-edit`, `wiki-plan`) are available, and the skill scripts
-resolve `./config.sh` in the repo root.
+## Agent Skills compatibility
 
-### User-wide (any project)
+The canonical skills are in `.agents/skills/`, following the open Agent Skills
+directory layout. Qwen Code, OpenCode, and other compatible clients can load
+those skills directly. Claude Code currently discovers `.claude/skills/`; this
+repository keeps `.claude/skills` as a symlink to the canonical `.agents/skills`
+directory.
+
+### Project-level use
+
+Open this repository in an Agent Skills-compatible client. Project config is
+read from `./config.sh` when commands run from the repo root, or use
+`MW_SKILLS_CONFIG` to select a private config file explicitly.
+
+### User-wide use
 
 ```bash
 bash install.sh
 # Then edit ~/.config/mw-skills/config.sh
 ```
 
-The skills are copied to `~/.claude/skills/` and are available from any project.
-They read their configuration from `~/.config/mw-skills/config.sh`.
-
-## opencode
-
-opencode uses the same `SKILL.md` format and discovers Claude-compatible skill
-directories, so no separate copy is needed:
-
-- **Project-level:** open this repo in opencode — it scans `.claude/skills/`.
-- **User-wide:** after `bash install.sh`, opencode also scans `~/.claude/skills/`.
-
-One difference: Claude Code substitutes `${CLAUDE_SKILL_DIR}` inside the skill
-body, while opencode emits the body verbatim. Each SKILL.md therefore instructs
-the agent to resolve it with the "Base directory for this skill" that opencode
-reports when the skill is loaded.
+The installer copies canonical skills to `~/.agents/skills/` for shared clients
+and links Claude Code's `~/.claude/skills/` entries to those copies. Credentials
+remain separate in `~/.config/mw-skills/config.sh`.
 
 ## File structure
 
 | File | Description |
 |------|-------------|
-| `.claude/skills/wiki-read/` | Read a wiki page (SKILL.md + scripts/) |
-| `.claude/skills/wiki-search/` | Search wiki pages (SKILL.md + scripts/) |
-| `.claude/skills/wiki-category/` | Browse and search categories (SKILL.md + scripts/) |
-| `.claude/skills/wiki-edit/` | Edit one or more wiki pages (SKILL.md + scripts/) |
-| `.claude/skills/wiki-plan/` | Follow a wiki page as a plan (SKILL.md + scripts/) |
+| `.agents/skills/wiki-read/` | Read a wiki page (SKILL.md + scripts/) |
+| `.agents/skills/wiki-search/` | Search wiki pages (SKILL.md + scripts/) |
+| `.agents/skills/wiki-category/` | Browse and search categories (SKILL.md + scripts/) |
+| `.agents/skills/wiki-edit/` | Edit one or more wiki pages (SKILL.md + scripts/) |
+| `.agents/skills/wiki-plan/` | Follow an approved wiki procedure (SKILL.md + scripts/) |
+| `.claude/skills` | Claude Code compatibility symlink to `.agents/skills` |
 | `config.sh.example` | Template for wiki connection settings |
-| `install.sh` | Install the skills to `~/.claude/skills/` |
+| `install.sh` | Install shared skills and Claude compatibility links |
