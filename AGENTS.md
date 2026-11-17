@@ -9,7 +9,9 @@ symlink for Claude Code.
 
 - Bash 4 or newer, `curl`, and `jq`
 - Network access to the selected MediaWiki API
-- `MW_URL` or a local profile in `config.sh` / `~/.config/mw-skills/config.sh`
+- `MW_URL`, or one `MW_<NAME>=(url username botpassword [proxy])` array per wiki
+  (legacy `MW_SITE_<NAME>_URL/USER/PASS` still loads), resolved by the shared
+  skill-config loader from `$MW_SKILLS_CONFIG` → nearest `<workspace-root>/.config/.mw-skills.sh` above `$PWD` → `./config.sh` → `~/.config/mw-skills/config.sh`
 
 Use each skill's bundled script and shared helper library. Scripts resolve the
 library relative to their own location, so do not copy one script out by itself.

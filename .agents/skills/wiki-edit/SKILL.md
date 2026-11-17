@@ -51,7 +51,7 @@ This is the only skill that logs in. It keeps a persistent cookie (default
 `~/.config/mw-skills/cookies.txt`), so a login is reused and you only log in
 again when the session is missing or has expired.
 
-Configuration: the script looks for a config in this order — `$MW_SKILLS_CONFIG`,
+Configuration: the script looks for a config in this order — `$MW_SKILLS_CONFIG`, (resolved by the shared skill-config loader; a workspace's `.config/.mw-skills.sh` wins over the global file)
 then `./config.sh`, then `~/.config/mw-skills/config.sh`. Set `MW_SITE=name` to
 select a named profile (`MW_SITE_NAME_URL`, `MW_SITE_NAME_USER`, and
 `MW_SITE_NAME_PASS`). Each site gets a separate persistent cookie jar.

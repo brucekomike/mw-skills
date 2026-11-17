@@ -1,27 +1,61 @@
-# MediaWiki connection settings
-# Copy this file to config.sh and fill in the values. config.sh is git-ignored;
-# keep it mode 600 and never upload it with an agent toolkit.
+# MediaWiki connection settings — TEMPLATE
+#
+# Preferred location: <workspace-root>/.config/.mw-skills.sh
+#   One .config/ dir per workspace, one dot-file per skill, so a workspace selects
+#   itself by being the directory you are in. The shared loader walks up from $PWD
+#   to find it; the workspace root is derived from that path, never restated.
+#
+#   mkdir -p ~/Workspace/my-project/.config
+#   cp config.sh.example ~/Workspace/my-project/.config/.mw-skills.sh
+#   chmod 600 ~/Workspace/my-project/.config/.mw-skills.sh
+#
+# A workspace root is normally NOT a git worktree, so .config/ sits above every
+# repo and is committed nowhere. Keep it mode 600 — it can hold a BotPassword. If
+# a root IS a repo, gitignore .config/ rather than letting a token reach a remote.
+#
+# Search order, first hit wins: $MW_SKILLS_CONFIG → nearest .config/.mw-skills.sh
+# above $PWD → ./config.sh → ~/.config/mw-skills/config.sh. Values exported in the
+# real environment override whatever the found file sets.
+#
+# Requires the shared loader ~/.config/skill-config/loader.sh (from a bk-skills
+# bundle). Without it lib.sh returns 3 with an install note — it never exits your
+# shell, because it is sourced.
+#
 # Obtain a dedicated, least-privilege bot account from Special:BotPassword.
-# MW_USER/MW_PASS are used only by wiki-edit; read skills need only MW_URL.
+# Credentials are used only by wiki-edit; read skills need only the url.
 
-# Single/default site (backward-compatible form)
-export MW_URL=""        # wiki base URL ending with /  e.g. https://wiki.example.com/
-export MW_USER=""       # bot username  e.g. MyBot@BotPassword
-export MW_PASS=""       # bot password
+# --- one array per wiki -------------------------------------------------------
+# Slots: 0 url · 1 bot username · 2 bot password · 3 proxy (optional).
+# An absent slot or the literal `nil` means unset — so a read-only wiki is ONE
+# entry, and you never type placeholder credentials you do not have.
 
-# Multiple sites: set MW_SITE to one profile name (case-insensitive), either
-# in this file or per command: MW_SITE=mediawiki bash ...
-# Profile names must contain only letters, numbers, and underscores.
-# export MW_SITE="mediawiki"
-# export MW_SITE_MEDIAWIKI_URL="https://www.mediawiki.org/w/"
-# export MW_SITE_MEDIAWIKI_USER="MyBot@BotPassword"
-# export MW_SITE_MEDIAWIKI_PASS="bot-password"
-# export MW_SITE_PRIVATE_URL="https://wiki.example.com/w/"
-# export MW_SITE_PRIVATE_USER="MyBot@BotPassword"
-# export MW_SITE_PRIVATE_PASS="bot-password"
+MW_PUBLIC=("https://www.mediawiki.org/w/")
+MW_PRIVATE=("https://wiki.example.com/w/" "MyBot@BotPassword" "bot-password")
+MW_SLOW=("https://wiki.example.org/w/" "MyBot@BotPassword" "bot-password" "http://127.0.0.1:7890")
 
-# Optional: label embedded in edit summaries
-export BOT_INFO="mw-skills"
+# Select one, here or per command:  MW_SITE=private bash wiki-read.sh "Some page"
+# With no MW_SITE the plain MW_URL/MW_USER/MW_PASS below are used.
+#MW_SITE="private"
 
-# Optional: proxy for slow networks (applies to all requests)
-# export MW_PROXY="http://127.0.0.1:7890"
+# --- default site (optional) --------------------------------------------------
+# Used when MW_SITE is unset or "default". With nothing set at all, the built-in
+# fallback is https://en.wikipedia.org/w/ so reads work out of the box.
+#MW_URL="https://wiki.example.com/"
+#MW_USER=""
+#MW_PASS=""
+
+# Label embedded in edit summaries.
+BOT_INFO="mw-skills"
+
+# Global proxy, applied when the selected wiki has none of its own.
+#MW_PROXY="http://127.0.0.1:7890"
+
+# Cookie jar: defaults to ~/.config/mw-skills/cookies.txt for the default site and
+# cookies-<site>.txt for a named one, so a login is reused across runs.
+#MW_COOKIE_JAR="/path/to/cookies.txt"
+#MW_SKILLS_COOKIE_DIR="/path/to/dir"
+
+# --- legacy form: still loads, no migration required --------------------------
+#MW_SITE_MEDIAWIKI_URL="https://www.mediawiki.org/w/"
+#MW_SITE_MEDIAWIKI_USER="MyBot@BotPassword"
+#MW_SITE_MEDIAWIKI_PASS="bot-password"

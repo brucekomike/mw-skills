@@ -1,10 +1,28 @@
 #!/usr/bin/env bash
 # lib.sh – shared MediaWiki API helpers for mw-skills
 
-# Wiki selection (no config file required): config is loaded first, then
-# explicit environment values override it. MW_SITE selects named profiles such
-# as MW_SITE_WIKI_URL, MW_SITE_WIKI_USER, and MW_SITE_WIKI_PASS.
-# MW_USER/MW_PASS (BotPassword) are needed solely by mw-login (wiki-edit).
+# Wiki selection: config is loaded first, then explicit environment values
+# override it. MW_SITE selects a profile, written either as
+#   MW_<SITE>=("<url>" "<username>" "<botpassword>" [proxy|nil])
+# or the legacy MW_SITE_<SITE>_URL/USER/PASS. An absent slot or `nil` means unset,
+# so a read-only wiki needs only the url. MW_USER/MW_PASS (BotPassword) are needed
+# solely by mw-login (wiki-edit).
+#
+# Discovery and profile expansion live in the shared skill-config loader so every
+# skill resolves the same way. This file is SOURCED, so every failure path uses
+# `return … || exit …` — a bare exit would kill the caller's shell.
+_MW_LOADER="${SKILL_CONFIG_LOADER:-${HOME}/.config/skill-config/loader.sh}"
+if [[ ! -f "$_MW_LOADER" ]]; then
+  echo "mw-skills: shared config loader not found at $_MW_LOADER" >&2
+  echo "mw-skills: install a bk-skills bundle to get it:" >&2
+  echo "             gh release download --repo brucekomike/bk-skills --pattern '*.tar.gz'" >&2
+  echo "             bash scripts/install-bundle.sh ./bk-skills-*.tar.gz   # from a bk-skills checkout" >&2
+  echo "mw-skills: or set SKILL_CONFIG_LOADER=/path/to/loader.sh" >&2
+  return 3 2>/dev/null || exit 3
+fi
+# shellcheck source=/dev/null
+source "$_MW_LOADER"
+
 _MW_ENV_URL="${MW_URL:-}"
 _MW_ENV_USER="${MW_USER:-}"
 _MW_ENV_PASS="${MW_PASS:-}"
@@ -13,15 +31,10 @@ _MW_ENV_PROXY="${MW_PROXY:-}"
 _MW_ENV_BOT_INFO="${BOT_INFO:-}"
 _MW_ENV_COOKIE_JAR="${MW_COOKIE_JAR:-}"
 _MW_ENV_COOKIE_DIR="${MW_SKILLS_COOKIE_DIR:-}"
-_MW_CONFIG="${MW_SKILLS_CONFIG:-}"
-if [[ -z "$_MW_CONFIG" ]]; then
-  for _candidate in "${PWD}/config.sh" "${HOME}/.config/mw-skills/config.sh"; do
-    if [[ -f "$_candidate" ]]; then
-      _MW_CONFIG="$_candidate"
-      break
-    fi
-  done
-fi
+
+# $MW_SKILLS_CONFIG -> nearest <workspace>/.config/.mw-skills.sh above $PWD ->
+# ./config.sh -> ~/.config/mw-skills/config.sh.
+_MW_CONFIG="$(skillconf_find MW || true)"
 if [[ -n "$_MW_CONFIG" && -f "$_MW_CONFIG" ]]; then
   # shellcheck source=/dev/null
   source "$_MW_CONFIG"
@@ -34,17 +47,12 @@ if [[ ! "$MW_SITE" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
 fi
 _MW_SITE_KEY="${MW_SITE^^}"
 if [[ "$_MW_SITE_KEY" != "DEFAULT" ]]; then
-  _MW_PROFILE_URL="$(eval "printf '%s' \"\${MW_SITE_${_MW_SITE_KEY}_URL:-}\"")"
-  _MW_PROFILE_USER="$(eval "printf '%s' \"\${MW_SITE_${_MW_SITE_KEY}_USER:-}\"")"
-  _MW_PROFILE_PASS="$(eval "printf '%s' \"\${MW_SITE_${_MW_SITE_KEY}_PASS:-}\"")"
-  if [[ -z "$_MW_PROFILE_URL" && -z "$_MW_ENV_URL" ]]; then
+  # Slot 2 is the BotPassword and lands in MW_PASS (not MW_TOKEN); slot 3 gives a
+  # per-site proxy, which the old flat form could not express.
+  if ! skillconf_apply MW "$MW_SITE" && [[ -z "$_MW_ENV_URL" ]]; then
     echo "mw-skills: unknown site profile: $MW_SITE" >&2
+    echo "mw-skills: define MW_${_MW_SITE_KEY}=(\"<url>\" \"<username>\" \"<botpassword>\" [proxy|nil])" >&2
     return 1 2>/dev/null || exit 1
-  fi
-  if [[ -n "$_MW_PROFILE_URL" ]]; then
-    MW_URL="$_MW_PROFILE_URL"
-    MW_USER="$_MW_PROFILE_USER"
-    MW_PASS="$_MW_PROFILE_PASS"
   fi
 fi
 MW_URL="${_MW_ENV_URL:-${MW_URL:-https://en.wikipedia.org/w/}}"

@@ -34,4 +34,4 @@ Wiki selection: no config is needed. The default value is configured in a
 without the protocol scheme.
 
 - To fetch from a different wiki, export `MW_URL` inline: `MW_URL="https://www.mediawiki.org/" bash <skill-directory>/scripts/wiki-plan.sh "<page-name>"`
-- Or use a persistent config (first found wins): `$MW_SKILLS_CONFIG`, then `./config.sh`, then `~/.config/mw-skills/config.sh`.
+- Or use a persistent config (first found wins): `$MW_SKILLS_CONFIG`, then `./config.sh`, then `~/.config/mw-skills/config.sh`. (resolved by the shared skill-config loader; a workspace's `.config/.mw-skills.sh` wins over the global file)

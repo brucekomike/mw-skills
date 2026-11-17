@@ -40,4 +40,4 @@ configured profile with `MW_SITE`.
 - To query a different wiki, export `MW_URL` inline: `MW_URL="https://www.mediawiki.org/" bash <skill-directory>/scripts/wiki-read.sh "<page-name>"`
 - `MW_URL` is always a manual override and takes precedence over the selected site's URL.
 - For multiple configured sites, set `MW_SITE=mediawiki`; profiles use `MW_SITE_MEDIAWIKI_URL`, `MW_SITE_MEDIAWIKI_USER`, and `MW_SITE_MEDIAWIKI_PASS`.
-- Persistent config is selected in this order: `$MW_SKILLS_CONFIG`, then `./config.sh`, then `~/.config/mw-skills/config.sh`.
+- Persistent config is selected in this order: `$MW_SKILLS_CONFIG`, then `./config.sh`, then `~/.config/mw-skills/config.sh`. (resolved by the shared skill-config loader; a workspace's `.config/.mw-skills.sh` wins over the global file)

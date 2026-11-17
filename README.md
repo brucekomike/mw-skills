@@ -86,11 +86,12 @@ at another wiki, either export `MW_URL` for a single call, or create a config fi
 cp config.sh.example config.sh
 # Edit config.sh and fill in MW_URL.
 # For wiki-edit, also fill in MW_USER and MW_PASS from Special:BotPassword.
-# Multiple sites can use MW_SITE_NAME_URL/USER/PASS profiles and MW_SITE=name.
+# Multiple sites: one array each, e.g. MW_PRIVATE=("https://wiki.example/w/" "Bot@x" "pass")
+# then MW_SITE=private. Slots: url, username, botpassword, optional proxy; nil/absent = unset.
+# A read-only wiki needs only the url: MW_PUBLIC=("https://www.mediawiki.org/w/")
 ```
 
-Resolution order: first found config (`$MW_SKILLS_CONFIG`, `./config.sh`,
-`~/.config/mw-skills/config.sh`), then explicit environment overrides. `MW_SITE`
+Resolution order: first found config (`$MW_SKILLS_CONFIG` → nearest `<workspace-root>/.config/.mw-skills.sh` above `$PWD` → `./config.sh` → `~/.config/mw-skills/config.sh`), then explicit environment overrides. `MW_SITE`
 selects a named profile; `MW_URL`/`MW_USER`/`MW_PASS` override it. Each site has
 its own cookie jar.
 

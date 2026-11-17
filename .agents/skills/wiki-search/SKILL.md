@@ -37,4 +37,4 @@ The default wiki is Wikipedia. Set `MW_URL` for a one-off target or select a
 configured profile with `MW_SITE`.
 
 - To search a different wiki, export `MW_URL` inline: `MW_URL="https://www.mediawiki.org/w/" bash <skill-directory>/scripts/wiki-search.sh "<query>"`
-- Or use a persistent config (first found wins): `$MW_SKILLS_CONFIG`, then `./config.sh`, then `~/.config/mw-skills/config.sh`.
+- Or use a persistent config (first found wins): `$MW_SKILLS_CONFIG`, then `./config.sh`, then `~/.config/mw-skills/config.sh`. (resolved by the shared skill-config loader; a workspace's `.config/.mw-skills.sh` wins over the global file)
